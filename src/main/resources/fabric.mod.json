@@ -15,7 +15,7 @@
 	"icon": "assets/creeper-alarm/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
+		"client": [
 			"gurtletirl.squirt.CreeperAlarm"
 		]
 	},

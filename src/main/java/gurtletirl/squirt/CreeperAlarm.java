@@ -1,24 +1,64 @@
 package gurtletirl.squirt;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class CreeperAlarm implements ClientModInitializer {
 
-public class CreeperAlarm implements ModInitializer {
-	public static final String MOD_ID = "creeper-alarm";
+    private static final Identifier WARNING_TEXTURE =
+            Identifier.of("creeper-alarm", "textures/hud/warning.png");
+    private static final double WARN_RANGE = 10.0;
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private boolean creeperNearby = false;
+    private boolean wasCreeperNearby = false;
 
-	@Override
-	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+    @Override
+    public void onInitializeClient() {
+        ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
+        HudRenderCallback.EVENT.register(this::onHudRender);
+    }
 
-		LOGGER.info("Hello Fabric world!");
-	}
+    private void onClientTick(MinecraftClient client) {
+        if (client.player == null || client.world == null) {
+            creeperNearby = false;
+            wasCreeperNearby = false;
+            return;
+        }
+
+        creeperNearby = !client.world.getEntitiesByClass(
+                CreeperEntity.class,
+                client.player.getBoundingBox().expand(WARN_RANGE),
+                creeper -> true
+        ).isEmpty();
+
+        if (creeperNearby && !wasCreeperNearby) {
+            client.player.playSound(
+                    SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1.0f, 1.0f
+            );
+        }
+
+        wasCreeperNearby = creeperNearby;
+    }
+
+    private void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
+        if (!creeperNearby) return;
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        int screenWidth = client.getWindow().getScaledWidth();
+        int screenHeight = client.getWindow().getScaledHeight();
+
+        // ~40% of screen height, centered horizontally, upper third
+        int size = (int) (screenHeight * 0.4);
+        int x = (screenWidth - size) / 2;
+        int y = (screenHeight - size) / 4;
+
+        drawContext.drawTexture(WARNING_TEXTURE, x, y, 0, 0, size, size, size, size);
+    }
 }
