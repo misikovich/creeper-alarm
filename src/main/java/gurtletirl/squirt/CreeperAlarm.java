@@ -54,11 +54,6 @@ public class CreeperAlarm implements ClientModInitializer {
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
 
-        // ~40% of screen height, centered horizontally, upper third
-        int size = (int) (screenHeight * 0.4);
-        int x = (screenWidth - size) / 2;
-        int y = (screenHeight - size) / 4;
-
-        drawContext.drawTexture(WARNING_TEXTURE, x, y, 0, 0, size, size, size, size);
+        drawContext.drawTexture(WARNING_TEXTURE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
     }
 }
