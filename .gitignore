@@ -32,6 +32,10 @@ bin/
 
 run/
 
+# claude
+
+.claude/
+
 # java
 
 hs_err_*.log
