@@ -20,26 +20,30 @@ public class CreeperAlarm implements ClientModInitializer {
     private static final SoundEvent ALARM_SOUND =
             SoundEvent.of(ALARM_SOUND_ID);
     private static final float FADE_SPEED = 0.05f; // ~1 second to fully fade in/out
+    private static final int SOUND_COOLDOWN_TICKS = 100; // ~5 seconds
 
     private boolean creeperTargeting = false;
     private boolean wasCreeperTargeting = false;
     private float overlayAlpha = 0.0f;
+    private int soundCooldown = 0;
 
     @Override
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(CreeperAlarmPayload.ID, (payload, context) -> {
             creeperTargeting = payload.creeperTargeting();
 
-            if (creeperTargeting && !wasCreeperTargeting) {
+            if (creeperTargeting && !wasCreeperTargeting && soundCooldown <= 0) {
                 MinecraftClient client = context.client();
                 if (client.player != null) {
-                    client.player.playSound(ALARM_SOUND, 1.0f, 1.0f);
+                    client.player.playSound(ALARM_SOUND, 0.5f, 1.0f);
+                    soundCooldown = SOUND_COOLDOWN_TICKS;
                 }
             }
             wasCreeperTargeting = creeperTargeting;
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (soundCooldown > 0) soundCooldown--;
             if (creeperTargeting) {
                 overlayAlpha = Math.min(1.0f, overlayAlpha + FADE_SPEED);
             } else {
