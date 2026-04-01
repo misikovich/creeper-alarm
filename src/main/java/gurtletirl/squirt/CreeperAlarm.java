@@ -7,13 +7,17 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class CreeperAlarm implements ClientModInitializer {
 
     private static final Identifier WARNING_TEXTURE =
             Identifier.of("creeper-alarm", "textures/hud/warning.png");
+    private static final Identifier ALARM_SOUND_ID =
+            Identifier.of("creeper-alarm", "alarm");
+    private static final SoundEvent ALARM_SOUND =
+            SoundEvent.of(ALARM_SOUND_ID);
     private static final double WARN_RANGE = 10.0;
 
     private boolean creeperNearby = false;
@@ -39,9 +43,7 @@ public class CreeperAlarm implements ClientModInitializer {
         ).isEmpty();
 
         if (creeperNearby && !wasCreeperNearby) {
-            client.player.playSound(
-                    SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1.0f, 1.0f
-            );
+            client.player.playSound(ALARM_SOUND, 1.0f, 1.0f);
         }
 
         wasCreeperNearby = creeperNearby;
