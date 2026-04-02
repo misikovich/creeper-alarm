@@ -64,7 +64,7 @@ public class CreeperAlarm implements ClientModInitializer {
         int alpha = (int) (overlayAlpha * 255);
         int color = (alpha << 24) | 0xFFFFFF; // variable alpha, white tint
 
-        drawContext.drawTexture(RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
+        drawContext.drawTexture(RenderPipelines.GUI_TEXTURED,
                 WARNING_TEXTURE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight, color);
     }
 }
