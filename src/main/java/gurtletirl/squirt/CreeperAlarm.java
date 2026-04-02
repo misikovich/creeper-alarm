@@ -1,11 +1,11 @@
 package gurtletirl.squirt;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.sound.SoundEvent;
@@ -54,17 +54,17 @@ public class CreeperAlarm implements ClientModInitializer {
         HudRenderCallback.EVENT.register(this::onHudRender);
     }
 
-    private void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
+    private void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) { //mojang im coming for you
         if (overlayAlpha <= 0.0f) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
 
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, overlayAlpha);
-        drawContext.drawTexture(WARNING_TEXTURE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.disableBlend();
+        int alpha = (int) (overlayAlpha * 255);
+        int color = (alpha << 24) | 0xFFFFFF; // variable alpha, white tint
+
+        drawContext.drawTexture(RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
+                WARNING_TEXTURE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight, color);
     }
 }

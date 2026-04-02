@@ -1,15 +1,15 @@
 {
 	"schemaVersion": 1,
 	"id": "creeper-alarm",
-	"version": "${version}",
+	"version": "1.0.1",
 	"name": "creeper alarm",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "yo bro watch out",
 	"authors": [
-		"Me!"
+		"gurtletirl"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "insert very professional website that i absolutely have here",
+		"sources": "https://github.com/gurtletirl/creeper-alarm/"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/creeper-alarm/icon.png",
@@ -26,8 +26,8 @@
 		"creeper-alarm.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.5",
-		"minecraft": "~1.21.1",
+		"fabricloader": ">=0.18.6",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
 	}

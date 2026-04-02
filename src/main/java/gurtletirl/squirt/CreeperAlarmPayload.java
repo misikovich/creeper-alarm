@@ -10,7 +10,7 @@ public record CreeperAlarmPayload(boolean creeperTargeting) implements CustomPay
     public static final Id<CreeperAlarmPayload> ID =
             new Id<>(Identifier.of("creeper-alarm", "alert"));
     public static final PacketCodec<RegistryByteBuf, CreeperAlarmPayload> CODEC =
-            PacketCodec.tuple(PacketCodecs.BOOL, CreeperAlarmPayload::creeperTargeting, CreeperAlarmPayload::new);
+            PacketCodec.tuple(PacketCodecs.BOOLEAN, CreeperAlarmPayload::creeperTargeting, CreeperAlarmPayload::new);
 
     @Override
     public Id<? extends CustomPayload> getId() {
