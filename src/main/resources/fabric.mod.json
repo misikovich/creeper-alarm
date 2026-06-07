@@ -5,7 +5,8 @@
 	"name": "creeper alarm",
 	"description": "yo bro watch out",
 	"authors": [
-		"gurtletirl"
+		"gurtletirl",
+		"misikovich"
 	],
 	"contact": {
 		"homepage": "insert very professional website that i absolutely have here",
@@ -27,8 +28,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.18.5",
-		"minecraft": "~1.21.11",
-		"java": ">=21",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
 		"fabric-api": "*"
 	}
 }

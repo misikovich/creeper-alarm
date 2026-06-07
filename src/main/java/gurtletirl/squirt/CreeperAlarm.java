@@ -3,24 +3,25 @@ package gurtletirl.squirt;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
-public class CreeperAlarm implements ClientModInitializer {
+public class CreeperAlarm implements ClientModInitializer, HudElement {
 
     private static final Identifier WARNING_TEXTURE =
-            Identifier.of("creeper-alarm", "textures/hud/warning.png");
+            Identifier.fromNamespaceAndPath("creeper-alarm", "textures/hud/warning.png");
     private static final Identifier ALARM_SOUND_ID =
-            Identifier.of("creeper-alarm", "alarm");
+            Identifier.fromNamespaceAndPath("creeper-alarm", "alarm");
     private static final SoundEvent ALARM_SOUND =
-            SoundEvent.of(ALARM_SOUND_ID);
-    private static final float FADE_SPEED = 0.05f; // ~1 second to fully fade in/out
-    private static final int SOUND_COOLDOWN_TICKS = 100; // ~5 seconds
+            SoundEvent.createVariableRangeEvent(ALARM_SOUND_ID);
+    private static final float FADE_SPEED = 0.05f;
+    private static final int SOUND_COOLDOWN_TICKS = 100;
 
     private boolean creeperTargeting = false;
     private boolean wasCreeperTargeting = false;
@@ -29,11 +30,11 @@ public class CreeperAlarm implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(CreeperAlarmPayload.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(CreeperAlarmPayload.TYPE, (payload, context) -> {
             creeperTargeting = payload.creeperTargeting();
 
             if (creeperTargeting && !wasCreeperTargeting && soundCooldown <= 0) {
-                MinecraftClient client = context.client();
+                Minecraft client = context.client();
                 if (client.player != null) {
                     client.player.playSound(ALARM_SOUND, 0.5f, 1.0f);
                     soundCooldown = SOUND_COOLDOWN_TICKS;
@@ -51,20 +52,21 @@ public class CreeperAlarm implements ClientModInitializer {
             }
         });
 
-        HudRenderCallback.EVENT.register(this::onHudRender);
+        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("creeper-alarm", "warning"), this);
     }
 
-    private void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) { //mojang im coming for you
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) { //mojang im coming for you
         if (overlayAlpha <= 0.0f) return;
 
-        MinecraftClient client = MinecraftClient.getInstance();
-        int screenWidth = client.getWindow().getScaledWidth();
-        int screenHeight = client.getWindow().getScaledHeight();
+        Minecraft client = Minecraft.getInstance();
+        int screenWidth = client.getWindow().getGuiScaledWidth();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
 
         int alpha = (int) (overlayAlpha * 255);
-        int color = (alpha << 24) | 0xFFFFFF; // variable alpha, white tint
+        int color = (alpha << 24) | 0xFFFFFF;
 
-        drawContext.drawTexture(RenderPipelines.GUI_TEXTURED,
-                WARNING_TEXTURE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight, color);
+        drawContext.blit(RenderPipelines.GUI_TEXTURED,
+                WARNING_TEXTURE, 0, 0, 0.0f, 0.0f, screenWidth, screenHeight, screenWidth, screenHeight, color);
     }
 }
