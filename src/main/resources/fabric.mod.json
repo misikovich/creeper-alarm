@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "creeper-alarm",
-	"version": "1.0.1",
+	"version": "2.0.7",
 	"name": "creeper alarm",
 	"description": "yo bro watch out",
 	"authors": [
@@ -10,15 +10,12 @@
 	],
 	"contact": {
 		"homepage": "insert very professional website that i absolutely have here",
-		"sources": "https://github.com/gurtletirl/creeper-alarm/"
+		"sources": "https://github.com/misikovich/creeper-alarm/"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/creeper-alarm/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"gurtletirl.squirt.CreeperAlarmServer"
-		],
 		"client": [
 			"gurtletirl.squirt.CreeperAlarm"
 		]
