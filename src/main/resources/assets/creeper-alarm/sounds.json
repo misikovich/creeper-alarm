@@ -3,10 +3,5 @@
     "sounds": [
       "creeper-alarm:alarm"
     ]
-  },
-  "alarm-real": {
-    "sounds": [
-      "creeper-alarm:alarm-real"
-    ]
   }
 }
